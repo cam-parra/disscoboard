@@ -4,17 +4,18 @@ const socketIO = require('socket.io');
 const path = require('path');
 //var port = 3700;
 const PORT = process.env.PORT || 3000;
-const INDEX = path.join(__dirname, 'index.html');
+app.set('views', __dirname + '/views/pages');
+///const INDEX = path.join(__dirname, 'main');
 
 //var port = 3700;
 
-app.set('views', __dirname + '/views/pages');
+
 
 app.set('view engine', 'jade');
 app.engine('jade', require('jade').__express);
 app.use(express.static(__dirname + '/public'));
 const server = app
-  .use((req, res) => res.sendFile(INDEX) )
+  .use((req, res) => res.render("main") )
   .listen(PORT, () => console.log(`Listening on ${ PORT }`));
 
 const io = socketIO(server);
