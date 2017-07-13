@@ -1,20 +1,22 @@
-var express = require('express');
+var express = require("express");
 var app = express();
+//var port = 3700;
 
+app.set('views', __dirname + '/views/pages');
 app.set('port', (process.env.PORT || 5000));
+app.set('view engine', 'jade');
+app.engine('jade', require('jade').__express);
+app.get("/", function(req, res){
+    res.render("main");
+});
 
 app.use(express.static(__dirname + '/public'));
-
-// views is directory for all template files
-app.set('views', __dirname + '/views');
-app.set('view engine', 'ejs');
-
-app.get('/', function(request, response) {
-  response.render('pages/index');
+var io = require('socket.io').listen(app.listen(app.get('port')));
+io.sockets.on('connection', function (socket) {
+    socket.emit('message', { message: 'welcome to the chat' });
+    socket.on('send', function (data) {
+        io.sockets.emit('message', data);
+    });
 });
 
-app.listen(app.get('port'), function() {
-  console.log('Node app is running on port', app.get('port'));
-});
-
-
+console.log("Listening on port " + app.get('port'));
