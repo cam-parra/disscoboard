@@ -1,22 +1,29 @@
-var express = require("express");
+const express = require('express');
 var app = express();
+const socketIO = require('socket.io');
+const path = require('path');
+//var port = 3700;
+const PORT = process.env.PORT || 3000;
+const INDEX = path.join(__dirname, 'index.html');
+
 //var port = 3700;
 
 app.set('views', __dirname + '/views/pages');
-app.set('port', (process.env.PORT || 5000));
+
 app.set('view engine', 'jade');
 app.engine('jade', require('jade').__express);
-app.get("/", function(req, res){
-    res.render("main");
-});
-
 app.use(express.static(__dirname + '/public'));
-var io = require('socket.io').listen(app.listen(app.get('port')));
-io.sockets.on('connection', function (socket) {
+const server = app
+  .use((req, res) => res.sendFile(INDEX) )
+  .listen(PORT, () => console.log(`Listening on ${ PORT }`));
+
+const io = socketIO(server);
+
+io.on('connection', function (socket) {
     socket.emit('message', { message: 'welcome to the chat' });
     socket.on('send', function (data) {
-        io.sockets.emit('message', data);
+        io.emit('message', data);
     });
 });
 
-console.log("Listening on port " + app.get('port'));
+setInterval(() => io.emit('time', new Date().toTimeString()), 1000);
