@@ -2,7 +2,7 @@ window.onload = function() {
   // this will hold our messages //
 	var messages = [];
   // make the connection //
-	var socket = io.connect('http://'+location.host);
+	var socket = io();
   // for convinience
 	var field = document.getElementById("field");
 	var sendButton = document.getElementById("send");
