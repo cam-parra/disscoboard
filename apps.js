@@ -46,11 +46,12 @@ app.post('/login', function(req, res) {
   var hashedPassword = [];
   //console.log();
   var queryPass= client.query('SELECT password FROM public.studentinfo WHERE username = $1', [ usera ]);
+  console.log(queryPass);
   queryPass.on("row", function (row, result) {
       result.addRow(row);
   });
   queryPass.on("end", function (result) {
-    console.log(result.rows[0]);
+    //console.log(result.rows[0]);
     var passtring= JSON.stringify(result.rows[0], null, "    ");
     var parsedstring = JSON.parse(passtring);
     //console.log(parsedstring);
