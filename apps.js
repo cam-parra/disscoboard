@@ -12,7 +12,7 @@ var cookieSession = require('cookie-session');
 var query = require('pg-query');
 pg.defaults.ssl = true;
 var port = process.env.PORT || 3000;
-var dbstring = process.env.DATABASE_URL; //"postgres://postgres:mystuff@localhost:5432/student";
+var dbstring = 'postgres://zwncfqnkcoxipy:64b135f38fc3fa705fcd64f3bbf55589fd1a53eece372d50247cb6add3dd9b70@ec2-23-21-220-152.compute-1.amazonaws.com:5432/d8tbpmstlnqkkq'; //"postgres://postgres:mystuff@localhost:5432/student";
 var client = new pg.Client( dbstring );
 client.connect(  );
 
