@@ -10,8 +10,15 @@
     "start": "node index.js"
   },
   "dependencies": {
-    "jade": "latest",
+    "body-parser": "^1.17.2",
+    "cookie-parser": "^1.4.3",
+    "cookie-session": "^2.0.0-beta.2",
     "express": "4.15.2",
+    "jade": "latest",
+    "method-override": "^2.3.9",
+    "password-hash": "^1.2.2",
+    "pg": "^6.4.0",
+    "pg-query": "^0.11.0",
     "socket.io": "latest"
   },
   "repository": {

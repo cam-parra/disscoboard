@@ -14,8 +14,10 @@ window.onload = function() {
 			messages.push(data);
 			var html = '';
 			for(var i=0; i<messages.length; i++) {
-				html += '<div class="card card-outline-primary mb-3 text-center"><div class="card-block"><blockquote class="card-blockquote"><b>' + (messages[i].username ? messages[i].username : 'Server') + ': </b>';
-				html += messages[i].message + '</blockquote></div></div><br />';
+				name = messages[i].username ;
+				html += '<div class="panel panel-default"><div class="panel-body"><div class="panel-body"><b>' + (messages[i].username ? messages[i].username : 'Class Name')
+				 + ': </b></div><div class="panel-footer">';
+				html += messages[i].message + '</div></div></div>';
 			}
 			content.innerHTML = html;
 		} else {
@@ -24,16 +26,13 @@ window.onload = function() {
 	});
 
 	sendButton.onclick = sendMessage = function() {
-		if(name.value == "") {
-			alert("Please type your name!");
-		} else {
-			var text = field.value;
-			socket.emit('send', { message: text, username: name.value });
-			field.value = "";
-		}
-	};
+		var text = field.value;
+		socket.emit('send', { message: text, username: name.value });
+		field.value = "";
 
+	};
 }
+
 $(document).ready(function() {
 	$("#field").keyup(function(e) {
 		if(e.keyCode == 13) {
