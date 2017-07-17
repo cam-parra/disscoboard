@@ -13,7 +13,9 @@ var cookieParser = require('cookie-parser');
 var cookieSession = require('cookie-session');
 var query = require('pg-query');
 pg.defaults.ssl = true;
-
+var io = require('socket.io').listen(server);
+io.set('origins', '*:*');
+io.set('match origin protocol', true);
 var dbstring = 'postgres://irnvnggjilufqd:db7267225d8650086ee1d5bdab62e6b85f5afaa80bcf2c4a5ffda865b0e93f98@ec2-107-21-99-176.compute-1.amazonaws.com:5432/d3vq1qrrdsrqe9'; //"postgres://postgres:mystuff@localhost:5432/student";
 var client = new pg.Client( dbstring );
 client.connect(  );
