@@ -50,6 +50,7 @@ app.post('/login', function(req, res) {
       result.addRow(row);
   });
   queryPass.on("end", function (result) {
+    console.log(result.rows[0]);
     var passtring= JSON.stringify(result.rows[0], null, "    ");
     var parsedstring = JSON.parse(passtring);
     //console.log(parsedstring);
