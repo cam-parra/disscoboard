@@ -45,7 +45,7 @@ app.post('/login', function(req, res) {
   var pass = req.body.password;
   var hashedPassword = [];
   //console.log();
-  var queryPass= client.query('SELECT password FROM studentinfo WHERE username = $1', [ usera ]);
+  var queryPass= client.query('SELECT password FROM public.studentinfo WHERE username = $1', [ usera ]);
   queryPass.on("row", function (row, result) {
       result.addRow(row);
   });
@@ -75,7 +75,7 @@ app.post('/login', function(req, res) {
 
     socket.on('message', function (message) {
       //client.connect(  );
-      var queryid= client.query('SELECT id FROM studentinfo WHERE username = $1', [ usera ]);
+      var queryid= client.query('SELECT id FROM public.studentinfo WHERE username = $1', [ usera ]);
       //console.log(queryid);
       queryid.on("row", function (row, result) {
           result.addRow(row);
@@ -85,7 +85,7 @@ app.post('/login', function(req, res) {
         var passtring= JSON.stringify(result.rows[0], null, "    ");
         var parsedstring = JSON.parse(passtring);
         //console.log(parsedstring);
-        var insequery = client.query("INSERT INTO messages(userID, message) values($1, $2)", [parsedstring.id, message]);
+        var insequery = client.query("INSERT INTO public.messages(userID, message) values($1, $2)", [parsedstring.id, message]);
         insequery .on("row", function (row, result) {
             result.addRow(row);
         });
@@ -98,7 +98,7 @@ app.post('/login', function(req, res) {
       console.log('message:' + message);
       socket.broadcast.emit("message", {'message': message, 'username': usera});
     });
-    var oldquerymessid= client.query('SELECT message FROM messages');
+    var oldquerymessid= client.query('SELECT public.message FROM messages');
     console.log(oldquerymessid);
     oldquerymessid.on("row", function (row, result) {
         result.addRow(row);
