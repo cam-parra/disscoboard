@@ -10,9 +10,9 @@ var passwordHash = require('password-hash');
 var cookieParser = require('cookie-parser');
 var cookieSession = require('cookie-session');
 var query = require('pg-query');
-
+pg.defaults.ssl = true;
 var port = process.env.PORT || 3000;
-var dbstring = "postgres://postgres:mystuff@localhost:5432/student";
+var dbstring = process.env.DATABASE_URL; //"postgres://postgres:mystuff@localhost:5432/student";
 var client = new pg.Client( dbstring );
 client.connect(  );
 
@@ -44,7 +44,7 @@ app.post('/login', function(req, res) {
   var usera = req.body.username;
   var pass = req.body.password;
   var hashedPassword = [];
-  //console.log(hashedPassword);
+  //console.log();
   var queryPass= client.query('SELECT password FROM public.studentinfo WHERE username = $1', [ usera ]);
   queryPass.on("row", function (row, result) {
       result.addRow(row);
