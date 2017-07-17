@@ -1,77 +1,119 @@
-/*
- * Modules
- *  Express: Basic stuff
- *  pg: psql request
- *  socketio: for live updates
- *  path: used to ease finding path
- *
- */
 var express = require( 'express' );
-var pg = require( 'pg' );
-
-
+var app = express(  );
+var server = require('http').Server(app);
+var io = require( 'socket.io' )(server);
 
 var path = require( 'path' );
 var bodyParser = require('body-parser');
+var pg = require( 'pg' );
+var passwordHash = require('password-hash');
 var cookieParser = require('cookie-parser');
 var cookieSession = require('cookie-session');
-var app = express(  );
-var server = require('http').createServer(app);
-var io = require( 'socket.io' )(server);
+var query = require('pg-query');
 
-// DATABASE
+var port = process.env.PORT || 3000;
 var dbstring = "postgres://postgres:mystuff@localhost:5432/student";
-const PORT = process.env.PORT || 3000;
 var client = new pg.Client( dbstring );
 client.connect(  );
-//
 
-// Set up
 app.set('views', __dirname + '/views/pages');
-app.use(bodyParser.urlencoded({
-    extended: true
-}));
 app.set('view engine', 'jade');
 app.engine('jade', require('jade').__express);
 app.use(express.static(__dirname + '/public'));
-app.set('trust proxy', 1);
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
 app.use(cookieSession({
   name: 'session',
   keys: ['0']
 }));
-//
 
-// GET and POST request
+
+
 app.get( '/', function (req, res) {
 
   res.render('login');
 
 } );
 
-var usera = ''
+
+
+
 app.post('/login', function(req, res) {
-  usera = req.body.username;
+
+  var usera = req.body.username;
   var pass = req.body.password;
+  var hashedPassword = [];
+  //console.log(hashedPassword);
+  var queryPass= client.query('SELECT password FROM public.studentinfo WHERE username = $1', [ usera ]);
+  queryPass.on("row", function (row, result) {
+      result.addRow(row);
+  });
+  queryPass.on("end", function (result) {
+    var passtring= JSON.stringify(result.rows[0], null, "    ");
+    var parsedstring = JSON.parse(passtring);
+    //console.log(parsedstring);
+
+    //client.end();
+    console.log(passwordHash.verify(pass, parsedstring.password));
+    if (passwordHash.verify(pass, parsedstring.password)) {
+
+      res.render('main');
+
+    }
+    //hashedPassword.push(parsedstring.password);
+  });
+
+
   req.session.username =  usera;
   req.session.pass =  pass;
-  if (req.session.username && req.session.username ) {
+  //console.log(passwordHash.verify(pass, hashedPassword));
 
-    res.render('main');
+  //console.log(usera);
 
-  }
-  console.log(usera);
+  io.on('connection', function(socket) {
 
-});
-server.listen(3000);
-
-// const io = socketIO(server);
-var mw = 'Welcome BYU-I students the following are posts from students and these will update as more are entered. Enjoy!';
-
-io.on('connection', function (socket) {
-    //socket.emit('message', { message:'', username: usera });
-    socket.on('send', function (data) {
-        io.emit('message', data);
+    socket.on('message', function (message) {
+      //client.connect(  );
+      var queryid= client.query('SELECT id FROM public.studentinfo WHERE username = $1', [ usera ]);
+      //console.log(queryid);
+      queryid.on("row", function (row, result) {
+          result.addRow(row);
+      });
+      queryid.on("end", function (result) {
+        //console.log(result.rows);
+        var passtring= JSON.stringify(result.rows[0], null, "    ");
+        var parsedstring = JSON.parse(passtring);
+        //console.log(parsedstring);
+        var insequery = client.query("INSERT INTO public.messages(userID, message) values($1, $2)", [parsedstring.id, message]);
+        insequery .on("row", function (row, result) {
+            result.addRow(row);
+        });
+        insequery.on("end", function (result) {
+          //console.log(result.rows);
+          var passtring= JSON.stringify(result.rows, null, "    ");
+          var parsedstring = JSON.parse(passtring);
+        });
+      });
+      console.log('message:' + message);
+      socket.broadcast.emit("message", {'message': message, 'username': usera});
     });
+    var oldquerymessid= client.query('SELECT message FROM public.messages');
+    console.log(oldquerymessid);
+    oldquerymessid.on("row", function (row, result) {
+        result.addRow(row);
+    });
+    oldquerymessid.on("end", function (result) {
+      console.log(result.rows);
+      var passtring= JSON.stringify(result.rows, null, "    ");
+      var parsedstring = JSON.parse(passtring);
+      console.log(parsedstring);
+      socket.emit("chatHistory", parsedstring);
+    });
+
+
+  });
 });
-console.log(usera);
-setInterval(() => io.emit('time', new Date().toTimeString()), 1000);
+
+server.listen(port , function () {
+console.log('connected to port: ' + port);});
