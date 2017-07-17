@@ -31,9 +31,6 @@ app.use(cookieSession({
   keys: ['key1', 'key2']
 }));
 
-const app = express()
-  .use((req, res) => res.sendFile(INDEX) )
-  .listen(PORT, () => console.log(`Listening on ${ PORT }`));
 
 const io = socketIO(server);
 

@@ -3,8 +3,7 @@ var express = require( 'express' );
 //var server = require('http').createServer(app);
 var socketIO = require( 'socket.io' );
 var PORT = process.env.PORT || 3000;
-const app = express()
-  .use((req, res) => res.sendFile("login") )
+const app = express().use((req, res) => res.sendFile("login") )
   .listen(PORT, () => console.log(`Listening on ${ PORT }`));
 var path = require( 'path' );
 var bodyParser = require('body-parser');
