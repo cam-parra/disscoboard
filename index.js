@@ -25,7 +25,7 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(cookieSession({
   name: 'session',
-  keys: ['0']
+  keys: ['key1', 'key2']
 }));
 
 
