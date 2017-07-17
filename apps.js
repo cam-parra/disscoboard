@@ -1,7 +1,7 @@
 var express = require( 'express' );
 var app = express(  );
 var server = require('http').Server(app);
-var io = require( 'socket.io' )(server);
+var io = require( 'socket.io' ).listen(server);
 
 var path = require( 'path' );
 var bodyParser = require('body-parser');
@@ -73,7 +73,7 @@ app.post('/login', function(req, res) {
 
   //console.log(usera);
 
-  io.on('connection', function(socket) {
+  io.socket.on('connection', function(socket) {
 
     socket.on('message', function (message) {
       //client.connect(  );
