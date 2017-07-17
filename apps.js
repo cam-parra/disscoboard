@@ -1,9 +1,11 @@
 var express = require( 'express' );
-var app = express(  );
-var server = require('http').createServer(app);
-var io = require( 'socket.io' ).listen(server);
-server.listen(process.env.PORT || 3000);
-
+//var app = express(  );
+//var server = require('http').createServer(app);
+var io = require( 'socket.io' );
+var PORT = process.env.PORT || 3000;
+const app = express()
+  .use((req, res) => res.sendFile("login") )
+  .listen(PORT, () => console.log(`Listening on ${ PORT }`));
 var path = require( 'path' );
 var bodyParser = require('body-parser');
 var pg = require( 'pg' );
@@ -12,7 +14,7 @@ var cookieParser = require('cookie-parser');
 var cookieSession = require('cookie-session');
 var query = require('pg-query');
 pg.defaults.ssl = true;
-var port = process.env.PORT || 3000;
+
 var dbstring = 'postgres://irnvnggjilufqd:db7267225d8650086ee1d5bdab62e6b85f5afaa80bcf2c4a5ffda865b0e93f98@ec2-107-21-99-176.compute-1.amazonaws.com:5432/d3vq1qrrdsrqe9'; //"postgres://postgres:mystuff@localhost:5432/student";
 var client = new pg.Client( dbstring );
 client.connect(  );
@@ -29,16 +31,11 @@ app.use(cookieSession({
   keys: ['key1', 'key2']
 }));
 
+const app = express()
+  .use((req, res) => res.sendFile(INDEX) )
+  .listen(PORT, () => console.log(`Listening on ${ PORT }`));
 
-
-app.get( '/', function (req, res) {
-
-  res.render('login');
-
-} );
-
-
-
+const io = socketIO(server);
 
 app.post('/login', function(req, res) {
 
