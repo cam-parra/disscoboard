@@ -1,7 +1,7 @@
 var express = require( 'express' );
 //var app = express(  );
 //var server = require('http').createServer(app);
-var io = require( 'socket.io' );
+var socketIO = require( 'socket.io' );
 var PORT = process.env.PORT || 3000;
 const app = express()
   .use((req, res) => res.sendFile("login") )
@@ -71,7 +71,7 @@ app.post('/login', function(req, res) {
 
   //console.log(usera);
 
-  io.socket.on('connection', function(socket) {
+  io.on('connection', function(socket) {
 
     socket.on('message', function (message) {
       //client.connect(  );
